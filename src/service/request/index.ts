@@ -1,5 +1,5 @@
 import axios from 'axios'
-import type { AxiosInstance, AxiosRequestConfig } from 'axios'
+import type { AxiosInstance } from 'axios'
 import type { MyRequestConfig } from './type'
 
 class MyRequest {
@@ -30,50 +30,49 @@ class MyRequest {
     )
 
     //局部拦截器
-    if (config.interceptors) {
-      this.instance.interceptors.request.use(
-        config.interceptors?.requestSuccessFn,
-        config.interceptors?.requestFailFn
-      )
-      this.instance.interceptors.response.use(
-        config.interceptors?.responseSuccessFn,
-        config.interceptors?.responseFailFn
-      )
-    }
+    this.instance.interceptors.request.use(
+      config.interceptors?.requestSuccessFn,
+      config.interceptors?.requestFailFn
+    )
+    this.instance.interceptors.response.use(
+      config.interceptors?.responseSuccessFn,
+      config.interceptors?.responseFailFn
+    )
   }
 
   request<T = any>(config: MyRequestConfig<T>) {
     if (config.interceptors?.requestSuccessFn) {
       config = config.interceptors.requestSuccessFn(config)
     }
+
     return new Promise<T>((resolve, reject) => {
-      this.instance.request<any, T>(config).then(
-        (res) => {
+      this.instance
+        .request<any, T>(config)
+        .then((res) => {
           if (config.interceptors?.responseSuccessFn) {
             res = config.interceptors.responseSuccessFn(res)
           }
           resolve(res)
-        },
-        (err) => {
+        })
+        .catch((err) => {
           reject(err)
-        }
-      )
+        })
     })
   }
 
   get<T = any>(config: MyRequestConfig<T>) {
-    this.instance.request({ ...config, method: 'GET' })
+    return this.request({ ...config, method: 'GET' })
   }
 
   post<T = any>(config: MyRequestConfig<T>) {
-    this.instance.request({ ...config, method: 'POST' })
+    return this.request({ ...config, method: 'POST' })
   }
 
   patch<T = any>(config: MyRequestConfig<T>) {
-    this.instance.request({ ...config, method: 'PATCH' })
+    return this.request({ ...config, method: 'PATCH' })
   }
   delete<T = any>(config: MyRequestConfig<T>) {
-    this.instance.request({ ...config, method: 'DELETE' })
+    return this.request({ ...config, method: 'DELETE' })
   }
 }
 
