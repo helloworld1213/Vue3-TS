@@ -1,7 +1,18 @@
 <template>
   <div class="main">
-    <h2>main</h2>
-    <button @click="btnClick">退出登录</button>
+    <el-container class="main-container">
+      <el-aside width="200px">
+        <main-aside></main-aside>
+      </el-aside>
+      <el-container>
+        <el-header>
+          <main-header></main-header>
+        </el-header>
+        <el-main>
+          <main-content></main-content>
+        </el-main>
+      </el-container>
+    </el-container>
   </div>
 </template>
 
@@ -9,6 +20,9 @@
 import { localCache } from '../../utils/cache'
 import { LOGIN_TOKEN } from '../../global/constants'
 import { useRouter } from 'vue-router'
+import MainAside from '@/components/main-menu/Main-aside.vue'
+import MainHeader from '@/components/main-header/Main-header.vue'
+import MainContent from './c-cpns/Main-content.vue'
 
 //vue2中使用路由的方式是: this.$router/this.$router
 //Vue3中与之对应的就是: useRouter/useRoute
@@ -22,4 +36,35 @@ function btnClick() {
 }
 </script>
 
-<style scoped lang="less"></style>
+<style scoped lang="less">
+.main {
+  height: 100%;
+}
+
+.el-aside {
+  overflow-x: hidden;
+  overflow-y: auto;
+  line-height: 200px;
+  text-align: left;
+  background-color: #fff;
+  background-color: #0c2135;
+  transition: 0.3s linear;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.main-container {
+  height: 100%;
+
+  .el-header {
+    height: 50px;
+  }
+
+  .el-main {
+    background-color: salmon;
+  }
+}
+</style>
