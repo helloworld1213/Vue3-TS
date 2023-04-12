@@ -10,6 +10,7 @@ import registerIcons from './global/registerIcons'
 
 const app = createApp(App)
 app.use(registerIcons)
+app.use(pinia) //default导出的registerPinia,所以还是可以起名叫pinia
+
 app.use(router)
-app.use(pinia)
 app.mount('#app')

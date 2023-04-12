@@ -1,15 +1,15 @@
 <template>
   <div class="main">
     <el-container class="main-container">
-      <el-aside width="200px">
-        <main-aside></main-aside>
+      <el-aside :width="isFoldMain ? '60px' : '210px'">
+        <main-aside :is-fold-main="isFoldMain"></main-aside>
       </el-aside>
       <el-container>
         <el-header>
-          <main-header></main-header>
+          <main-header @change-icon="getIconValue"></main-header>
         </el-header>
         <el-main>
-          <main-content></main-content>
+          <router-view></router-view>
         </el-main>
       </el-container>
     </el-container>
@@ -22,7 +22,7 @@ import { LOGIN_TOKEN } from '../../global/constants'
 import { useRouter } from 'vue-router'
 import MainAside from '@/components/main-menu/Main-aside.vue'
 import MainHeader from '@/components/main-header/Main-header.vue'
-import MainContent from './c-cpns/Main-content.vue'
+import { ref } from 'vue'
 
 //vue2中使用路由的方式是: this.$router/this.$router
 //Vue3中与之对应的就是: useRouter/useRoute
@@ -33,6 +33,12 @@ function btnClick() {
   localCache.removeCache(LOGIN_TOKEN)
   //2.跳转到登录页
   router.push('/login')
+}
+
+//改变aside显示
+const isFoldMain = ref(false)
+function getIconValue(payload: boolean) {
+  isFoldMain.value = payload
 }
 </script>
 
@@ -61,10 +67,6 @@ function btnClick() {
 
   .el-header {
     height: 50px;
-  }
-
-  .el-main {
-    background-color: salmon;
   }
 }
 </style>

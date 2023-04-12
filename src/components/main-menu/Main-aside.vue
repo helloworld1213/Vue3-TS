@@ -3,13 +3,14 @@
     <!-- 侧边栏标题 -->
     <div class="aside-title">
       <img src="../../assets/img/logo.1829caec.svg" alt="" />
-      <span>LiLei-CMS</span>
+      <span v-show="!isFoldMain">LiLei-CMS</span>
     </div>
     <!-- 侧边栏内容 -->
     <div class="content">
       <el-menu
-        default-active="2"
+        :default-active="defaultActive"
         unique-opened
+        :collapse="isFoldMain"
         text-color="#b7bdc3"
         active-text-color="#fff"
         background-color="#001529"
@@ -23,7 +24,10 @@
               <span>{{ item.name }}</span>
             </template>
             <template v-for="subItem in item.children" :key="subItem.id">
-              <el-menu-item :index="subItem.id + ''">
+              <el-menu-item
+                @click="changePath(subItem)"
+                :index="subItem.id + ''"
+              >
                 {{ subItem.name }}
               </el-menu-item>
             </template>
@@ -36,10 +40,49 @@
 
 <script setup lang="ts">
 import useAccountLogin from '@/store/login/login'
-import { toRefs } from 'vue'
+import { toRefs, ref, computed } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import { firstMenu, mapPathToMenu } from '../../utils/map-menus'
 
-const { roleMenus } = toRefs(useAccountLogin())
-console.log(roleMenus.value)
+//1.获取动态菜单
+// const { roleMenus } = toRefs(useAccountLogin())
+const accountLoginStore = useAccountLogin()
+const roleMenus = accountLoginStore.roleMenus
+
+//2.点击item菜单时跳转
+const router = useRouter()
+function changePath(item: any) {
+  // console.log(item)
+  const url = item.url
+  router.push(url)
+}
+
+//3.默认菜单跳转
+//两种情况:
+//1.首次登录,默认跳转到firstMenu
+//2.已经登录了,然后在某个item下面刷新了,这时候还是跳转到firstMenu就
+//不合适了,而是应该刷新后还是在某个item下面,这里就用到了useRoute
+const route = useRoute()
+// console.log(route)//可以刷新查看
+// const defaultActive = ref(firstMenu.id + '')
+
+// const pathMenu = mapPathToMenu(route.path, roleMenus)
+// const defaultActive = ref(pathMenu.id + '')
+//mapPathToMenu()方法里面'==='写成了'=',导致方法不生效,所以
+//刷新还是进入firstMenu
+
+//3.当点击面包屑的第一级菜单时,让它跳转到二级菜单的第一项
+//但是,页面发生变化了,item没有变化,因为不是响应式的
+const defaultActive = computed(() => {
+  const pathMenu = mapPathToMenu(route.path, roleMenus)
+  return pathMenu.id + ''
+})
+defineProps({
+  isFoldMain: {
+    type: Boolean,
+    default: false
+  }
+})
 </script>
 
 <style scoped lang="less">

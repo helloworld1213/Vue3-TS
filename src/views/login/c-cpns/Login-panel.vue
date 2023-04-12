@@ -70,6 +70,7 @@ function btnClick() {
 }
 h2 {
   text-align: center;
+  margin-bottom: 15px;
 }
 .psw {
   display: flex;

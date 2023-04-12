@@ -1,5 +1,6 @@
 import { LOGIN_TOKEN } from '@/global/constants'
 import { localCache } from '@/utils/cache'
+import { firstMenu } from '@/utils/map-menus'
 import { createRouter, createWebHashHistory } from 'vue-router'
 
 const router = createRouter({
@@ -15,6 +16,7 @@ const router = createRouter({
     },
     {
       path: '/main',
+      name: 'main',
       component: () => import('@/views/main/Main.vue')
     },
     {
@@ -31,6 +33,10 @@ router.beforeEach((to, from) => {
   //如果要跳转到main并且没有token,则让其自动跳转到登录页
   if (to.path === '/main' && !token) {
     return '/login'
+  }
+  //这里保证进入的是第一个页面
+  if (to.path === '/main') {
+    return firstMenu?.url
   }
 })
 export default router

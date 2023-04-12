@@ -1,87 +1,44 @@
 <template>
   <div class="main-header">
-    <div class="left-content">
-      <el-icon><Expand /></el-icon>
-      <el-breadcrumb>
-        <el-breadcrumb-item :to="{ path: '/' }">系统总览</el-breadcrumb-item>
-      </el-breadcrumb>
+    <div class="main-icon" @click="changeIcon">
+      <el-icon>
+        <component :is="isFold ? 'Expand' : 'Fold'"></component>
+      </el-icon>
     </div>
-    <div class="right-content">
-      <div class="left-part">
-        <span
-          ><el-icon><Bell /></el-icon
-        ></span>
-        <span>
-          <el-icon><ChatDotRound /></el-icon>
-        </span>
-        <span>
-          <el-icon><Postcard /></el-icon>
-          <i class="notice"></i>
-        </span>
-      </div>
-      <div class="right-part">
-        <img src="../../assets/img/avatar-info.webp" alt="" />
-        <span>lilei</span>
-      </div>
+    <div class="content">
+      <header-breadcrumb></header-breadcrumb>
+      <header-info></header-info>
     </div>
   </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import HeaderBreadcrumb from './Header-breadcrumb.vue'
+import { ref } from 'vue'
+
+const isFold = ref(false)
+const emit = defineEmits(['changeIcon'])
+function changeIcon() {
+  isFold.value = !isFold.value
+  emit('changeIcon', isFold.value)
+}
+</script>
 
 <style scoped lang="less">
 .main-header {
-  height: 100%;
   display: flex;
+  align-items: center;
+  height: 100%;
+}
+.main-icon {
+  font-size: 28px;
+  margin-right: 20px;
+  margin-top: 3px;
+}
+.content {
+  display: flex;
+  flex: 1;
+  align-items: center;
   justify-content: space-between;
-  align-items: center;
-}
-.left-content {
-  display: flex;
-  height: 100%;
-  align-items: center;
-  color: #000;
-  .el-icon {
-    font-size: 30px;
-    margin-right: 20px;
-  }
-}
-
-.right-content {
-  display: flex;
-
-  .left-part {
-    font-size: 20px;
-    line-height: 35px;
-    text-align: center;
-
-    span {
-      display: inline-block;
-      width: 40px;
-      height: 35px;
-      position: relative;
-    }
-
-    .notice {
-      position: absolute;
-      top: 3px;
-      right: 3px;
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background-color: red;
-    }
-  }
-  .right-part {
-    display: flex;
-    align-items: center;
-    margin: 0 20px;
-    img {
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      margin-right: 15px;
-    }
-  }
 }
 </style>
