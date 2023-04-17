@@ -9,6 +9,7 @@ import { localCache } from '@/utils/cache'
 import { LOGIN_TOKEN } from '@/global/constants'
 import router from '@/router'
 import { mapMenuToRoutes } from '@/utils/map-menus'
+import useRoleListStore from '@/store/main/main'
 
 interface ILoginState {
   token: string
@@ -81,7 +82,13 @@ const useAccountLogin = defineStore('login', {
       routes.forEach((route) => {
         router.addRoute('main', route)
       })
-      //5.页面跳转
+
+      //5.在登录页面添加角色列表和部门列表,因为会多个地方用到
+      //在login调用函数获取rolelist
+      const roleListStore = useRoleListStore()
+      roleListStore.getListAction()
+
+      //6.页面跳转
       router.push('/main')
     },
 
@@ -97,7 +104,13 @@ const useAccountLogin = defineStore('login', {
         this.userInfo = userInfo
         this.roleMenus = roleMenus
 
-        //动态添加路由
+        //1.当刷新了之后,再重新请求一下数据
+        //为什么不缓存? 因为这里的数据是经常变化的,不像token等数据
+        //在login调用函数获取rolelist
+        const roleListStore = useRoleListStore()
+        roleListStore.getListAction()
+
+        //2.动态添加路由
         const routes = mapMenuToRoutes(this.roleMenus)
         routes.forEach((route) => router.addRoute('main', route))
       }
