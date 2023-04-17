@@ -1,22 +1,22 @@
 <template>
   <div class="login">
-    <h2>login</h2>
-    <button @click="getData">点击登录1</button>
+    <login-panel></login-panel>
   </div>
 </template>
 
 <script setup lang="ts">
-import instanceRequest from '@/service/index'
-
-function getData() {
-  instanceRequest
-    .request({
-      url: '/home/multidata'
-    })
-    .then((res) => {
-      console.log('login res:', res)
-    })
-}
+import LoginPanel from './c-cpns/Login-panel.vue'
 </script>
 
-<style scoped lang="less"></style>
+<style scoped lang="less">
+.login {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 100%;
+  height: 100%;
+
+  background-image: url('@/assets/img/login-bg.svg');
+}
+</style>
