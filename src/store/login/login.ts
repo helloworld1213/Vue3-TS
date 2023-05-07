@@ -8,18 +8,21 @@ import type { IAccount } from '@/types/login'
 import { localCache } from '@/utils/cache'
 import { LOGIN_TOKEN } from '@/global/constants'
 import router from '@/router'
-import { mapMenuToRoutes } from '@/utils/map-menus'
+import { mapMenuListToPermissions, mapMenuToRoutes } from '@/utils/map-menus'
+import useRoleListStore from '@/store/main/main'
 
 interface ILoginState {
   token: string
   userInfo: any
   roleMenus: any
+  permissions: string[]
 }
 const useAccountLogin = defineStore('login', {
   state: (): ILoginState => ({
     token: '',
     userInfo: {},
-    roleMenus: []
+    roleMenus: [],
+    permissions: []
   }),
   actions: {
     //登录
@@ -41,12 +44,19 @@ const useAccountLogin = defineStore('login', {
       //缓存数据
       localCache.setCache('userInfo', this.userInfo)
       //3.2根据用户id获取权限
-      const roleMenusResult = await getRoleMenusRequest(id)
+      // const roleMenusResult = await getRoleMenusRequest(id)
+      const roleMenusResult = await getRoleMenusRequest(this.userInfo.role.id)
       // console.log(roleMenusResult)
-      this.roleMenus = roleMenusResult.data
+      const roleMenus = roleMenusResult.data
+      this.roleMenus = roleMenus
       //缓存数据
-      localCache.setCache('roleMenus', this.roleMenus)
+      localCache.setCache('roleMenus', roleMenus)
 
+      //3.3获取按钮权限的permission数据
+      //3.3.1创建一个permissions数组(里面保存的都是字符串)
+      const permissions = mapMenuListToPermissions(roleMenus)
+      //3.3.2创建映射函数,将字符串从菜单映射到数组中(map-menus)
+      this.permissions = permissions
       //4.动态添加路由
       //4.1动态的获取到路由对象,放到数组中
       //*路由对象都在独立的文件中
@@ -81,7 +91,13 @@ const useAccountLogin = defineStore('login', {
       routes.forEach((route) => {
         router.addRoute('main', route)
       })
-      //5.页面跳转
+
+      //5.在登录页面添加角色列表和部门列表,因为会多个地方用到
+      //在login调用函数获取rolelist
+      const roleListStore = useRoleListStore()
+      roleListStore.getListAction()
+
+      //6.页面跳转
       router.push('/main')
     },
 
@@ -97,7 +113,18 @@ const useAccountLogin = defineStore('login', {
         this.userInfo = userInfo
         this.roleMenus = roleMenus
 
-        //动态添加路由
+        //1.当刷新了之后,再重新请求一下数据
+        //为什么不缓存? 因为这里的数据是经常变化的,不像token等数据
+        //在login调用函数获取rolelist
+        const roleListStore = useRoleListStore()
+        roleListStore.getListAction()
+
+        //2.1创建一个permissions数组(里面保存的都是字符串)
+        const permissions = mapMenuListToPermissions(this.roleMenus)
+        //2.2创建映射函数,将字符串从菜单映射到数组中(map-menus)
+        this.permissions = permissions
+
+        //3.动态添加路由
         const routes = mapMenuToRoutes(this.roleMenus)
         routes.forEach((route) => router.addRoute('main', route))
       }

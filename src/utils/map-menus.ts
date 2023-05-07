@@ -86,3 +86,48 @@ export function mapPathToBreads(path: string, roleMenus: any[]) {
   }
   return breads
 }
+
+/**
+ * 菜单映射到id的列表函数
+ * @param menuList 外部传入的菜单列表
+ * @menu 子菜单列表
+ * @recurseGetId 递归得到id函数
+ */
+export function mapMenuListToIds(menuList: any[]) {
+  const ids: number[] = []
+  function recurseGetId(menus: any[]) {
+    for (const item of menus) {
+      if (item.children) {
+        recurseGetId(item.children)
+      } else {
+        ids.push(item.id)
+      }
+    }
+  }
+  recurseGetId(menuList)
+  return ids
+}
+
+/**
+ * 从菜单映射按钮的权限到数组中
+ * @param menuList 菜单列表
+ */
+export function mapMenuListToPermissions(menuList: any[]) {
+  const permissions: string[] = []
+
+  function recurseGetPermissions(menus: any[]) {
+    for (const item of menus) {
+      //后台数据: 系统总览为第一级, type为1
+      //核心技术/商品统计这类为第二级, type为2
+      //进入到页面,按钮的权限为第三级, type为3
+      if (item.type === 3) {
+        permissions.push(item.permission)
+      } else {
+        //children还有null的时候,这样for循环会报错,但是空数组不会
+        recurseGetPermissions(item.children ?? [])
+      }
+    }
+  }
+  recurseGetPermissions(menuList)
+  return permissions
+}

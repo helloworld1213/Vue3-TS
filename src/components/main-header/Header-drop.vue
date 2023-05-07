@@ -6,7 +6,7 @@
           :size="38"
           src="https://img2.baidu.com/it/u=3583477922,4044466710&fm=253&fmt=auto&app=138&f=JPEG?w=800&h=500"
         />
-        <span>lilei</span>
+        <span>{{ loginStore.userInfo.name }}</span>
       </div>
       <template #dropdown>
         <el-dropdown-menu>
@@ -32,6 +32,7 @@
 import { localCache } from '../../utils/cache'
 import { LOGIN_TOKEN } from '../../global/constants'
 import { useRouter } from 'vue-router'
+import useAccountLogin from '../../store/login/login'
 
 const router = useRouter()
 function layout() {
@@ -40,6 +41,9 @@ function layout() {
   //2.退出到login页面
   router.push('/login')
 }
+
+//2.根据登录名显示同样的名字
+const loginStore = useAccountLogin()
 </script>
 
 <style scoped lang="less">

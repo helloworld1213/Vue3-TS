@@ -68,5 +68,9 @@ function getIconValue(payload: boolean) {
   .el-header {
     height: 50px;
   }
+
+  .el-main {
+    background-color: #f0f2f5;
+  }
 }
 </style>
