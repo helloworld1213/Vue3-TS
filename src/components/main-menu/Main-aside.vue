@@ -3,7 +3,7 @@
     <!-- 侧边栏标题 -->
     <div class="aside-title">
       <img src="../../assets/img/logo.1829caec.svg" alt="" />
-      <span v-show="!isFoldMain">LiLei-CMS</span>
+      <span v-show="!isFoldMain">后台管理系统-CMS</span>
     </div>
     <!-- 侧边栏内容 -->
     <div class="content">

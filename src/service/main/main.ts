@@ -13,3 +13,10 @@ export function getDepartmentListRequest() {
     url: '/department/list'
   })
 }
+
+//获取菜单列表信息
+export function getMenuListRequest() {
+  return instanceRequest.post({
+    url: '/menu/list'
+  })
+}
